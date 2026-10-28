@@ -1,0 +1,40 @@
+FLUSHDB
+
+HSET bombero:20111222 tipodoc DNI nombre Ana apellido "Pérez" anios_servicio 12 localidad "Neuquén" genero F
+HSET bombero:22333444 tipodoc DNI nombre Luis apellido "Gómez" anios_servicio 8 localidad Cipolletti genero M
+HSET bombero:25444555 tipodoc DNI nombre Marta apellido Sosa anios_servicio 15 localidad "General Roca" genero F
+HSET bombero:30555666 tipodoc DNI nombre Diego apellido Ruiz anios_servicio 3 localidad "Neuquén" genero M
+
+SADD telefonos:20111222 2994421122
+SADD telefonos:22333444 2994765432
+
+SADD "localidad:Neuquén" 20111222 30555666
+SADD localidad:Cipolletti 22333444
+SADD "localidad:General Roca" 25444555
+
+HSET accidente:1001 tipo_accidente transito fecha 2025-03-14 localidad "Neuquén" cantidadheridos 2 motivo "Exceso de velocidad"
+HSET accidente:1002 tipo_accidente transito fecha 2025-04-02 localidad Cipolletti cantidadheridos 0 motivo "Frenada brusca"
+HSET accidente:2001 tipo_accidente incendio fecha 2025-05-20 localidad "Neuquén" cantidadheridos 1 tipo Vivienda
+HSET accidente:2002 tipo_accidente incendio fecha 2025-06-11 localidad "General Roca" cantidadheridos 0 tipo Forestal
+
+HSET accidente:1001:vehiculos 1 "Corsa|2012|2" 2 "Hilux|2019|1"
+HSET accidente:1002:vehiculos 1 "Gol|2015|1"
+
+HSET accidente:1001:roles 20111222 "Conductor de autobomba" 22333444 Rescatista
+HSET accidente:1002:roles 25444555 Rescatista 20111222 "Jefe de dotación"
+HSET accidente:2001:roles 20111222 "Jefe de dotación" 22333444 Rescatista
+HSET accidente:2002:roles 30555666 Brigadista
+
+SADD bombero:20111222:accidentes 1001 1002 2001
+SADD bombero:22333444:accidentes 1001 2001
+SADD bombero:25444555:accidentes 1002
+SADD bombero:30555666:accidentes 2002
+
+ZADD ranking:asistencias 3 Ana 2 Luis 1 Marta 1 Diego
+
+INCR visitas:cuartel:neuquen
+SET alerta:incendio:2001 activa EX 60
+
+ZRANGE ranking:asistencias 0 -1 REV WITHSCORES
+SMEMBERS "localidad:Neuquén"
+SINTER bombero:20111222:accidentes bombero:22333444:accidentes
